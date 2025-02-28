@@ -1,0 +1,44 @@
+{
+  "include": [
+    "./src/**/*.ts",
+    "./test/**/*.ts",
+    "./.eslintrc.cjs"
+  ],
+  "compilerOptions": {
+    "lib": [
+      "ES2022"
+    ],
+    "types": [
+      "node",
+      "reflect-metadata"
+    ],
+    "module": "NodeNext",
+    "outDir": "./dist",
+    "target": "ES2022",
+    "strict": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "importHelpers": true,
+    "declarationMap": true,
+    "noUnusedLocals": true,
+    "removeComments": true,
+    "moduleDetection": "force",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "moduleResolution": "NodeNext",
+    "noImplicitReturns": true,
+    "resolveJsonModule": true,
+    "noImplicitOverride": true,
+    "noUnusedParameters": false,
+    "allowUnreachableCode": false,
+    "emitDecoratorMetadata": true,
+    "importsNotUsedAsValues": "remove",
+    "experimentalDecorators": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": false,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}

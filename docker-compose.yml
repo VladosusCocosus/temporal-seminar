@@ -1,0 +1,86 @@
+services:
+  postgres:
+    image: postgres:16.1-alpine
+    networks:
+      - postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres:/var/lib/postgresql/data:rw
+    healthcheck:
+      test: pg_isready -U postgres -d postgres
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  temporal:
+    image: temporalio/auto-setup:1.23.0
+    depends_on:
+      - postgres
+    networks:
+      temporal:
+        ipv4_address: 172.100.0.2
+      postgres:
+    ports:
+      - 7233:7233
+    environment:
+      - DB=postgresql
+      - DB_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PWD=postgres
+      - POSTGRES_SEEDS=postgres
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+      - TEMPORAL_ADDRESS=temporal:7233
+      - BIND_ON_IP=0.0.0.0
+      - TEMPORAL_BROADCAST_ADDRESS=172.100.0.2
+    volumes:
+      - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+    healthcheck:
+      test: tctl --address temporal:7233 --namespace default namespace list
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    labels:
+      kompose.volume.type: configMap
+    restart: unless-stopped
+
+  temporal-admin-tools:
+    image: temporalio/admin-tools:1.23.0
+    depends_on:
+      - temporal
+    networks:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+  temporal-ui:
+    image: temporalio/ui:2.25.0
+    depends_on:
+      - temporal
+    networks:
+      - temporal
+    ports:
+      - 9001:8080
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:9000
+    restart: unless-stopped
+
+networks:
+  postgres:
+  temporal:
+    ipam:
+      config:
+        - subnet: 172.100.0.0/24
+          gateway: 172.100.0.1
+
+volumes:
+  postgres:
