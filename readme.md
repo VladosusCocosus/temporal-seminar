@@ -63,12 +63,3 @@ Workflow.sleep(10 * 60 * 1000);
 * Start-to-close timeout
 * Schedule-to-start timeout
 * Schedule-to-close timeout
-
-
-
-
-
-# temporal-seminar
-# temporal-seminar
-# temporal-seminar
-# temporal-seminar
